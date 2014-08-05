@@ -2,7 +2,7 @@
 
 describe('Service: store', function () {
 
-  beforeEach(module('persistence'));
+  beforeEach(module('dataConnector'));
 
   var store;
   var $httpBackend;

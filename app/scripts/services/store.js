@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('persistence', [])
+angular.module('dataConnector')
   .factory('store', ['$http', function ($http) {
     var store = {};
 
