@@ -48,7 +48,7 @@ angular.module('dataConnector')
       return 1;
     }
 
-    function Collection (identifier, model) {
+    function collectionMaker (identifier, model) {
       var collection = new Array();
       var model = model || {};
       var url = model.url || (baseUrl + identifier);
@@ -171,7 +171,7 @@ angular.module('dataConnector')
       for (var identifier in relationships) {
         var rel = relationships[identifier];
 
-        Object.defineProperty(this, (rel.as || identifier), {
+        Object.defineProperty(this, identifier, {
           get: function () {
             return relationshipMethods[rel.kind].call(this, rel);
           }
@@ -183,6 +183,6 @@ angular.module('dataConnector')
     
     return {
       dump: dump,
-      Collection: Collection
+      collection: collectionMaker
     };
   }]);

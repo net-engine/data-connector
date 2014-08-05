@@ -12,7 +12,7 @@ describe('Service: store', function () {
   }));
 
   it('should return a Collection method', function () {
-    expect(!!store.Collection).toBe(true);
+    expect(!!store.collection).toBe(true);
   });
 
   describe('#Collection', function () {
@@ -20,7 +20,7 @@ describe('Service: store', function () {
     var Dog;
 
     beforeEach(function () {
-      Cat = store.Collection('cats');
+      Cat = store.collection('cats');
     });    
 
     it('should build a Collection instance with passed identifier', function () {
@@ -37,7 +37,7 @@ describe('Service: store', function () {
 
     describe('#add', function () {
       beforeEach(function () {
-        Cat = store.Collection('cats');
+        Cat = store.collection('cats');
       });
 
       it('should add an item to the correct collection in the store', function () {
@@ -49,7 +49,7 @@ describe('Service: store', function () {
 
     describe('#create', function () {
       beforeEach(function () {
-        Cat = store.Collection('cats');
+        Cat = store.collection('cats');
         $httpBackend.when('POST', '/api/v1/cats')
           .respond(201, {
             cats: [{ id: 1, name: 'Felix' }]
@@ -72,7 +72,7 @@ describe('Service: store', function () {
 
     describe('#all', function () {
       beforeEach(function () {
-        Cat = store.Collection('cats');
+        Cat = store.collection('cats');
       });
 
       it('should return all items from the correct store', function () {
@@ -86,7 +86,7 @@ describe('Service: store', function () {
 
     describe('#fetchAll', function () {
       beforeEach(function () {
-        Cat = store.Collection('cats');
+        Cat = store.collection('cats');
         $httpBackend.when('GET', '/api/v1/cats')
           .respond(201, {
             cats: [
@@ -111,7 +111,7 @@ describe('Service: store', function () {
 
     describe('#find', function () {
       beforeEach(function () {
-        Cat = store.Collection('cats');
+        Cat = store.collection('cats');
       });
 
       it('should find the correct item', function () {
@@ -125,7 +125,7 @@ describe('Service: store', function () {
 
     describe('#remove', function () {
       beforeEach(function () {
-        Cat = store.Collection('cats');
+        Cat = store.collection('cats');
       });
 
       it('should remove the correct item', function () {
@@ -139,7 +139,7 @@ describe('Service: store', function () {
     describe('model.relationships', function () {
       describe('#hasMany', function () {
         beforeEach(function () {
-          Cat = store.Collection('cats', { 
+          Cat = store.collection('cats', { 
             relationships: {
               'dogs': {
                 kind: 'hasMany',
@@ -148,7 +148,7 @@ describe('Service: store', function () {
               }
             } 
           });
-          Dog = store.Collection('dogs');
+          Dog = store.collection('dogs');
         });
 
         it('should return an array of associated items', function () {
@@ -186,7 +186,7 @@ describe('Service: store', function () {
 
       describe('#hasOne', function () {
         beforeEach(function () {
-          Cat = store.Collection('cats', { 
+          Cat = store.collection('cats', { 
             relationships: {
               'dog': {
                 kind: 'hasOne',
@@ -195,7 +195,7 @@ describe('Service: store', function () {
               }
             } 
           });
-          Dog = store.Collection('dogs');
+          Dog = store.collection('dogs');
         });
 
         it('should return the associated items', function () {
