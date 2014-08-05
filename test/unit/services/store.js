@@ -1,18 +1,24 @@
 'use strict';
 
 describe('Service: store', function () {
+  angular.module('app', ['dataConnector']).config(function (storeProvider) {
+    storeProvider.setBaseUrl('/api/v1/');
+  });
 
-  beforeEach(module('dataConnector'));
+  beforeEach(module('app'));
 
   var store;
+  var collection;
   var $httpBackend;
   beforeEach(inject(function ($injector) {
     store = $injector.get('store');
+    collection = $injector.get('collection');
+
     $httpBackend = $injector.get('$httpBackend');
   }));
 
   it('should return a Collection method', function () {
-    expect(!!store.collection).toBe(true);
+    expect(!!collection.create).toBe(true);
   });
 
   describe('#Collection', function () {
@@ -20,7 +26,7 @@ describe('Service: store', function () {
     var Dog;
 
     beforeEach(function () {
-      Cat = store.collection('cats');
+      Cat = collection.create('cats');
     });    
 
     it('should build a Collection instance with passed identifier', function () {
@@ -37,7 +43,7 @@ describe('Service: store', function () {
 
     describe('#add', function () {
       beforeEach(function () {
-        Cat = store.collection('cats');
+        Cat = collection.create('cats');
       });
 
       it('should add an item to the correct collection in the store', function () {
@@ -49,7 +55,7 @@ describe('Service: store', function () {
 
     describe('#create', function () {
       beforeEach(function () {
-        Cat = store.collection('cats');
+        Cat = collection.create('cats');
         $httpBackend.when('POST', '/api/v1/cats')
           .respond(201, {
             cats: [{ id: 1, name: 'Felix' }]
@@ -72,7 +78,7 @@ describe('Service: store', function () {
 
     describe('#all', function () {
       beforeEach(function () {
-        Cat = store.collection('cats');
+        Cat = collection.create('cats');
       });
 
       it('should return all items from the correct store', function () {
@@ -86,7 +92,7 @@ describe('Service: store', function () {
 
     describe('#fetchAll', function () {
       beforeEach(function () {
-        Cat = store.collection('cats');
+        Cat = collection.create('cats');
         $httpBackend.when('GET', '/api/v1/cats')
           .respond(201, {
             cats: [
@@ -111,7 +117,7 @@ describe('Service: store', function () {
 
     describe('#find', function () {
       beforeEach(function () {
-        Cat = store.collection('cats');
+        Cat = collection.create('cats');
       });
 
       it('should find the correct item', function () {
@@ -125,7 +131,7 @@ describe('Service: store', function () {
 
     describe('#remove', function () {
       beforeEach(function () {
-        Cat = store.collection('cats');
+        Cat = collection.create('cats');
       });
 
       it('should remove the correct item', function () {
@@ -139,7 +145,7 @@ describe('Service: store', function () {
     describe('model.relationships', function () {
       describe('#hasMany', function () {
         beforeEach(function () {
-          Cat = store.collection('cats', { 
+          Cat = collection.create('cats', { 
             relationships: {
               'dogs': {
                 kind: 'hasMany',
@@ -148,7 +154,7 @@ describe('Service: store', function () {
               }
             } 
           });
-          Dog = store.collection('dogs');
+          Dog = collection.create('dogs');
         });
 
         it('should return an array of associated items', function () {
@@ -186,7 +192,7 @@ describe('Service: store', function () {
 
       describe('#hasOne', function () {
         beforeEach(function () {
-          Cat = store.collection('cats', { 
+          Cat = collection.create('cats', { 
             relationships: {
               'dog': {
                 kind: 'hasOne',
@@ -195,7 +201,7 @@ describe('Service: store', function () {
               }
             } 
           });
-          Dog = store.collection('dogs');
+          Dog = collection.create('dogs');
         });
 
         it('should return the associated items', function () {
