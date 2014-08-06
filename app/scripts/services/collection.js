@@ -20,15 +20,26 @@ angular.module('dataConnector')
 
     function add (content) {
       var resource;
+      var existingItem;
       var collection = store[this._identifier];
 
       if (this !== collection) {
         resource = collection.add(content);
-      } else {
-        resource = new Item(this, content);
-      }
+        return this.push(resource);
 
-      this.push(resource);
+      } else {   
+        existingItem = collection.find(content.id);
+
+        if (existingItem) {
+          return _.extend(existingItem, content);
+        
+        } else {
+          resource = new Item(this, content)
+          this.push(resource);
+          return resource;
+        
+        }
+      }
     }
 
     function remove (id) {
@@ -44,6 +55,10 @@ angular.module('dataConnector')
     }
 
     function collectionMaker (identifier, model) {
+      if (store[identifier]) {
+        throw new Error(identifier + ' collection already exists');
+      }
+
       var collection = new Array();
       var model = model || {};
       var url = model.url || (baseUrl + identifier);
@@ -122,8 +137,8 @@ angular.module('dataConnector')
       return collection;
     }
 
-    function Query (identifier, items) {
-      var subset = Array.apply(this, items);
+    function relationMaker (identifier, items) {
+      var subset = Array.apply([], items);
 
       Object.defineProperties(subset, {
         '_identifier': {
@@ -149,7 +164,7 @@ angular.module('dataConnector')
       query[rel.foreignKey] = this.id;
       var items = _.where(collection, query);
 
-      return new Query(collection._identifier, items);
+      return relationMaker(collection._identifier, items);
     }
 
     function hasOne (rel) {
@@ -163,6 +178,8 @@ angular.module('dataConnector')
       var model = collection._model;
       var relationships = model.relationships;
 
+      this._identifier = collection._identifier;
+
       for (var identifier in relationships) {
         var rel = relationships[identifier];
 
@@ -174,6 +191,33 @@ angular.module('dataConnector')
       }
 
       _.extend(this, content);
+    }
+
+    Item.prototype.update = function update (attributes) {
+      function create (attributes) {
+        var collection = store[this._identifier];
+        var payload = {};
+        payload[this._identifier] = [attributes];
+
+        return $http.put(collection.url + '/' + this.id, payload)
+          .then(function (response) {
+            collection.receiveCollection(response);
+            
+            return this;
+          });
+      }
+    };
+
+    Item.prototype.destroy = function destroy () {
+      var collection = store[this._identifier];
+      var item = this;
+
+      return $http.delete(collection.url + '/' + item.id)
+        .then(function(response) {
+          collection.remove(item.id);
+          
+          return response.data;
+        });
     }
 
     return {
