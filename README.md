@@ -8,17 +8,17 @@ Kind of a little client side DB, mostly an ajax abstraction layer.
 
 Include `dataConnector` in your app initialization.
 
-Make collections with the store's collection method.
+Make collections with the collection factory.
 
 ```js
 angular.module('myApp')
-  .factory('Cat', ['store', function Cat(store) {
-    return store.collection('cats');
+  .factory('Cat', ['collection', function Cat(store) {
+    return collection.create('cats');
   });
 
 angular.module('myApp')
-  .factory('Dog', ['store', function Dog(store) {
-    return store.collection('dogs');
+  .factory('Dog', ['collection', function Dog(store) {
+    return collection.create('dogs');
   });
 ```
 
@@ -102,7 +102,7 @@ When you define a collection you get the chance to provide some relationship dat
 
 ```js
 // The Cat service
-return store.Collection('cats', { 
+return collection.create('cats', { 
   relationships: {
     'dogs': {
       kind: 'hasMany',
@@ -113,7 +113,7 @@ return store.Collection('cats', {
 });
 
 // The Dog service
-return store.Collection('dogs');
+return collection.create('dogs');
 
 // ... after data has been recieved from an API records are added to the store.
 Cat.add({ id: 1, name: 'Felix' });
